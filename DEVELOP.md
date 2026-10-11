@@ -27,21 +27,20 @@ RUN go install -v
 ENTRYPOINT ["app","-single=true","-port=8080"]
 EOF
 
-docker build -t IMAGE:{TAG} .
+docker build -t ${IMAGE}:${TAG} .
 ````
 
 
-
-
-
-
+## TASK 2
 
 ```
 echo "=== TASK 2: Testing Docker container locally ==="
-docker run -d -p 8080:8080 IMAGE:{TAG}
+docker run -d -p 8080:8080 ${IMAGE}:${TAG}
+```
 
+## TASK 3
 
-
+```
 echo "=== TASK 3: Creating Artifact Registry & Pushing Image ==="
 gcloud artifacts repositories create ${REPO} \
     --repository-format=docker \
@@ -49,8 +48,8 @@ gcloud artifacts repositories create ${REPO} \
     --description="Valkyrie Docker repository"
 
 gcloud auth configure-docker ${REGION}-docker.pkg.dev
-docker tag IMAGE:{TAG} REGION-docker.pkg.dev/DEVSHELL_PROJECT_ID/REPO/{IMAGE}:${TAG}
-docker push REGION-docker.pkg.dev/DEVSHELL_PROJECT_ID/REPO/{IMAGE}:${TAG}
+docker tag ${IMAGE}:${TAG} ${REGION}-docker.pkg.dev/$DEVSHELL_PROJECT_ID/${REPO}/${IMAGE}:${TAG}
+docker push ${REGION}-docker.pkg.dev/$DEVSHELL_PROJECT_ID/${REPO}/${IMAGE}:${TAG}
 
 ````
 
@@ -64,7 +63,7 @@ gcloud container clusters get-credentials ${CLUSTER} --zone ${ZONE}
 
 cd k8s
 # Automatically update the deployment.yaml placeholder with your exact project and image path
-sed -i.bak "s#us-east1-docker.pkg.dev/PROJECT-ID/REPOSITORY/IMAGE:TAG#REGION-docker.pkg.dev/DEVSHELL_PROJECT_ID/REPO/{IMAGE}:${TAG}#g" deployment.yaml
+sed -i.bak "s#us-east1-docker.pkg.dev/PROJECT-ID/REPOSITORY/IMAGE:TAG#${REGION}-docker.pkg.dev/$DEVSHELL_PROJECT_ID/${REPO}/${IMAGE}:${TAG}#g" deployment.yaml
 
 kubectl apply -f deployment.yaml
 kubectl apply -f service.yaml
@@ -84,12 +83,12 @@ export REGION="us-east1"
 ```
 cd ~/valkyrie-app
 docker build -t ${IMAGE}:${TAG} .
+docker tag ${IMAGE}:${TAG} ${REGION}-docker.pkg.dev/$DEVSHELL_PROJECT_ID/${REPO}/${IMAGE}:${TAG}
 ```
 
 
-
-docker tag IMAGE:{TAG} REGION-docker.pkg.dev/DEVSHELL_PROJECT_ID/REPO/{IMAGE}:${TAG}
+```
 gcloud auth configure-docker ${REGION}-docker.pkg.dev
-docker push REGION-docker.pkg.dev/DEVSHELL_PROJECT_ID/REPO/{IMAGE}:${TAG}
-
+docker push ${REGION}-docker.pkg.dev/$DEVSHELL_PROJECT_ID/${REPO}/${IMAGE}:${TAG}
+```
 
