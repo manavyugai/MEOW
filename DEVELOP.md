@@ -69,11 +69,13 @@ kubectl apply -f deployment.yaml
 kubectl apply -f service.yaml
 
 echo "=== ALL TASKS COMPLETED SUCCESSFULLY! ==="
+```
 
-````
-                                        FOR TASK 3(ERROR)
+                                        ## FOR TASK 3(ERROR)
 
-````
+
+
+```
 export REPO="valkyrie-docker"
 export IMAGE="valkyrie-dev"
 export TAG="v0.0.1"
